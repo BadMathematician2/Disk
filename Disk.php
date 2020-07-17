@@ -10,16 +10,27 @@ class Disk
 {
     protected $path_to_files = __DIR__.'/resources/files/';
 
+
+    /**
+     * @param string $file_name
+     */
+    private final function order($file_name)
+    {
+        $command = new Process(['java', '-jar', $this->pathToJar(), '--order='.$file_name , __DIR__. DIRECTORY_SEPARATOR . 'resources']);
+        $command->run();
+    }
     /**
      * @param string $file_name
      * @return string|null
      */
     public final function update($file_name)
     {
-        $command = new Process(['java', '-jar', $this->pathToJar(), '--update='.$file_name , __DIR__. DIRECTORY_SEPARATOR . 'resources']);
+        $this->order($file_name);
+        $command = new Process(['java', '-jar', $this->pathToJar(), '--update=' . $file_name, __DIR__ . DIRECTORY_SEPARATOR . 'resources']);
         $command->run();
 
         return $command->getOutput();
+
     }
 
     /**

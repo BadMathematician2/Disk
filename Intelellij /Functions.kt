@@ -1,14 +1,10 @@
-import java.io.BufferedWriter
 import java.io.File
-import java.io.FileWriter
 import java.lang.Exception
-import kotlin.concurrent.thread
 
 class Functions {
     companion object{
 
         fun makeSections(pathToRes: String, filename: String, n: Int){
-            order(filename)
             val files = File("$pathToRes/files/names.txt").bufferedReader().readLines()
             for (i in files.indices)
             {
@@ -58,7 +54,7 @@ class Functions {
             f.close()
             val f2 = File(filename).bufferedWriter()
             val a = points.toTypedArray()
-            shorte(a)
+            quick_sort(a,0,a.size-1)
             for(i in a.indices)
             {
                 f2.write(a[i])
@@ -68,25 +64,32 @@ class Functions {
 
         }
 
+        private fun quick_sort(A: Array<String>, p: Int, r: Int) {
+            if (p < r) {
+                val q: Int = partition(A, p, r)
+                quick_sort(A, p, q - 1)
+                quick_sort(A, q + 1, r)
 
-        private fun shorte(arr: Array<String>)
-        {
-            var sorted = false
-            var temp: String
-            while (!sorted)
-            {
-                sorted = true
-                for (i in 0 until arr.size - 1)
-                {
-                    if (arr[i].substringBefore(';').toDouble() > arr[i+1].substringBefore(';').toDouble())
-                    {
-                        temp = arr[i]
-                        arr[i] = arr[i+1]
-                        arr[i+1] = temp
-                        sorted = false
-                    }
+            }
+        }
+
+        private fun partition(A: Array<String>, p: Int, r: Int): Int {
+            val x = A[r].substringAfter(';').substringBefore(';').toFloat()
+            var i = p - 1
+            for (j in p until r) {
+                if (A[j].substringAfter(';').substringBefore(';').toFloat() <= x) {
+                    i++
+                    exchange(A, i, j)
                 }
             }
+            exchange(A, i + 1, r)
+            return i + 1
+        }
+
+        private fun exchange(A: Array<String>, i: Int, j: Int) {
+            val temp = A[i]
+            A[i] = A[j]
+            A[j] = temp
         }
         }
 
