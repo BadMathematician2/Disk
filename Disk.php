@@ -9,6 +9,8 @@ use Symfony\Component\Process\Process;
 
 class Disk
 {
+    protected $path_to_files = __DIR__.'/resources/files/';
+
     /**
      * @param string $file_name
      * @return string|null
@@ -17,11 +19,15 @@ class Disk
     {
         $command = new Process(['java', '-jar', $this->pathToJar(), '--update='.$file_name , __DIR__. DIRECTORY_SEPARATOR . 'resources']);
         $command->run();
+
         return $command->getOutput();
     }
 
-
     /**
+     * i -- it is id
+     * x -- it is longitude
+     * y -- it is latitude
+     *
      * @param float $xCenter
      * @param float $yCenter
      * @param float $radius
@@ -29,40 +35,70 @@ class Disk
      */
     public final function data($xCenter,$yCenter,$radius)
     {
-        $result = array(['id' => 0, 'long' => 0, 'lati' => 0]);
-        $names = file(__DIR__.'/resources/files/names.txt');
-        $first = 0;
-        $last = sizeof($names) - 2;
-        for ($i = 0; $i < sizeof($names); $i++) {
-            if ($xCenter - $radius <= (float)$names[$i]) {
-                $first = $i;
-                break;
-            }
-        }
-        for ($i = $first; $i < sizeof($names); $i++) {
-            if ($xCenter + $radius <= (float)$names[$i]) {
-                $last = $i;
-                break;
-            }
-        }
+        $result = array(['i' => 0, 'x' => 0, 'y' => 0]);
+        $names = file($this->path_to_files.'names.txt');
+
+        $first = $this->getBorder($names,$xCenter - $radius);
+        $last = $this->getBorder($names, $xCenter + $radius, $first);
+
         for ($i = $first; $i <= $last; $i++) {
-            $points = file(__DIR__.'/resources/files/' . substr($names[$i], 0, strlen($names[$i]) - 1) . '.txt');
+            $points = file($this->getFileName($names[$i]));
             foreach ($points as $point) {
                 $arr = explode(";", $point, 3);
-                if (((float)$arr[1] - $xCenter) ** 2 + ((float)$arr[2] - $yCenter) ** 2 <= $radius ** 2) {
-                    array_push($result, ['id' => $arr[0], 'long' => $arr[1], 'lati' => (float)$arr[2]]);
+                if($this->checkInDisc($xCenter,$yCenter,$radius,$arr)) {
+                    array_push($result, ['i' => $arr[0], 'x' => $arr[1], 'y' => (float)$arr[2]]);
                 }
             }
         }
-        return json_encode($result);
 
+        return json_encode($result);
     }
 
+    /**
+     * @param float $xCenter
+     * @param float $yCenter
+     * @param float $radius
+     * @param $arr
+     * @return bool
+     */
+    private function checkInDisc($xCenter,$yCenter,$radius,$arr)
+    {
+
+         return ((float)$arr[1] - $xCenter) ** 2 + ((float)$arr[2] - $yCenter) ** 2 <= $radius ** 2;
+    }
     /**
      * @return string
      */
     private function pathToJar()
     {
         return __DIR__.'/bin/mavenPoints.jar';
+    }
+
+    /**
+     * @param string $name
+     * @return string
+     */
+    private function getFileName($name)
+    {
+        return $this->path_to_files . substr($name, 0, strlen($name) - 1) . '.txt';
+    }
+
+    /**
+     * @param string[] $names
+     * @param float $distance
+     * @param int $start
+     * @return int
+     */
+    private function getBorder($names,$distance, $start = 0)
+    {
+        $result = $start;
+        for ($i = 0; $i < sizeof($names); $i++) {
+            if ($distance <= (float)$names[$i]) {
+                $result = $i;
+                break;
+            }
+        }
+
+        return $result;
     }
 }
