@@ -1,7 +1,7 @@
 <?php
 
 
-namespace App\Packages\Disk;
+namespace Disk;
 
 
 use Illuminate\Support\Facades\Facade;

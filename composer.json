@@ -1,19 +1,25 @@
 {
-    "name": "mykola/disk",
+    "name": "search_in_disk/disk",
+    "version": "1.0.0",
     "authors": [
         {
             "name": "Mykola",
             "email": "mathematic204chnu@gmail.com"
         }
     ],
+    "autoload": {
+        "psr-4": {
+            "Disk\\": ""
+        }
+    },
     "require": {},
     "extra": {
         "laravel": {
             "providers": [
-                "\\Disk\\DiskProvider"
+                "Disk\\DiskProvider"
             ],
             "aliases": {
-                "Disk": "\\Disk\\DiskFacade"
+                "Disk": "Disk\\DiskFacade"
             }
         }
     }
