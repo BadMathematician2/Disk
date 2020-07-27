@@ -8,7 +8,7 @@ use Symfony\Component\Process\Process;
 
 class Disk
 {
-    protected $path_to_files = __DIR__.'/resources/files/';
+    protected $path_to_files = __DIR__ . '/resources/files/';
 
 
     /**
@@ -16,7 +16,7 @@ class Disk
      */
     private final function order($file_name)
     {
-        $command = new Process(['java', '-jar', $this->pathToJar(), '--order='.$file_name , __DIR__. DIRECTORY_SEPARATOR . 'resources']);
+        $command = new Process(['java', '-jar', $this->pathToJar(), '--order='.$file_name , __DIR__ . DIRECTORY_SEPARATOR]);
         $command->run();
     }
     /**
@@ -26,7 +26,7 @@ class Disk
     public final function update($file_name)
     {
         $this->order($file_name);
-        $command = new Process(['java', '-jar', $this->pathToJar(), '--update=' . $file_name, __DIR__ . DIRECTORY_SEPARATOR . 'resources']);
+        $command = new Process(['java', '-jar', $this->pathToJar(), '--update=' . $file_name, __DIR__ . DIRECTORY_SEPARATOR]);
         $command->run();
 
         return $command->getOutput();
@@ -81,7 +81,7 @@ class Disk
      */
     private function pathToJar()
     {
-        return __DIR__.'/bin/mavenPoints.jar';
+        return __DIR__ . '/bin/mavenPoints.jar';
     }
 
     /**
